@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "../lib/common.h"
 //
 // Created by jack on 23-8-23.
@@ -17,15 +16,14 @@ int main(int argc, char **argv) {
 
     //create socket
     int listen_fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (listen_fd < 0) {
-        error(1, errno, "socket create failed");
-    }
 
     //create socket addr
     struct sockaddr_in socket_addr;
+    bzero(&socket_addr, sizeof(socket_addr));
     socket_addr.sin_family = AF_INET;
-    socket_addr.sin_port = SERV_PORT;
-    socket_addr.sin_addr.s_addr = INADDR_ANY;
+    socket_addr.sin_port = htons(SERV_PORT);
+    //meijia htonl
+    socket_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 
     int res0 = bind(listen_fd, (struct sockaddr *)&socket_addr, sizeof(socket_addr));
     if (res0 < 0) {

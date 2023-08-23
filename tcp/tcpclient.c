@@ -1,9 +1,10 @@
-#include <stdio.h>
 #include "lib/common.h"
+
+# define    MAXLINE     4096
 
 int main(int argc, char **argv) {
     if (argc != 2) {
-        error(1, errno, "parameter count error");
+        error(1, 0, "parameter count error");
     }
     //create socket
     int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -15,7 +16,7 @@ int main(int argc, char **argv) {
     socket_addr.sin_port = htons(SERV_PORT);
     socket_addr.sin_family = AF_INET;
 
-    int socket_len = sizeof(socket_addr);
+    socklen_t socket_len = sizeof(socket_addr);
     //connect
     int con_res = connect(socket_fd, (struct sockaddr *) &socket_addr, socket_len);
     if (con_res < 0) {
