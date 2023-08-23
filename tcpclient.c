@@ -2,6 +2,9 @@
 #include "lib/common.h"
 
 int main(int argc, char **argv) {
+    if (argc != 2) {
+        error(1, errno, "parameter count error");
+    }
     //create socket
     int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
     //config socket_addr, init socket_addr to zero
