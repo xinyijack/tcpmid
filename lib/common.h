@@ -8,7 +8,7 @@
 #include "config.h"
 
 #include "log.h"
-#include "tcp_server.h"
+//#include "tcp_server.h"
 #include "inetaddress.h"
 #include "channel_map.h"
 
@@ -32,7 +32,7 @@
 #include    <sys/un.h>        /* for Unix domain sockets */
 
 #include    <sys/select.h>    /* for convenience */
-#include    <sys/sysctl.h>
+//#include    <sys/sysctl.h>
 #include    <poll.h>        /* for convenience */
 #include    <strings.h>        /* for convenience */
 #include    <sys/ioctl.h>

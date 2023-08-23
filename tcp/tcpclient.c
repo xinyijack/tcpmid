@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
             if (n < 0) {
                 error(1, errno, "read failed");
             } else if (n == 0) {
-                error(1, errno, "server closed")
+                error(1, errno, "server closed");
             }
             recv_line[n] = 0;
             fputs(recv_line, stdout);

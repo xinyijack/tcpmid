@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "lib/common.h"
+#include "../lib/common.h"
 //
 // Created by jack on 23-8-23.
 //
@@ -11,9 +11,9 @@ static void sig_int(int sign) {
 }
 
 int main(int argc, char **argv) {
-    if (argc != 2) {
-        error(1, errno, "param count error");
-    }
+//    if (argc != 2) {
+//        error(1, errno, "param count error");
+//    }
 
     //create socket
     int listen_fd = socket(AF_INET, SOCK_STREAM, 0);
