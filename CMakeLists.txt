@@ -34,3 +34,5 @@ add_subdirectory(lib/)
 add_subdirectory(tcp)
 
 
+
+add_executable(run cmd/run.c)

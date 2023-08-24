@@ -57,15 +57,19 @@ int main(int argc, char **argv) {
         }
         message[n] = 0;
         printf("recv %d bytes: %s \n", n, message);
-
+        //执行收到的命令，并在终端执行，获取执行的输出
         char send_line[MAXLINE];
-        sleep(5);
+        sleep(2);
+        FILE * f;
+        f = popen(message, "r");
 
-        sprintf(send_line, "Hi, %s", message);
-        int wn = send(socked_fd, send_line, strlen(send_line), 0);
-        printf("now send %d bytes", wn);
-        if (wn < 0) {
-            error(1, errno, "send failed");
+        while (fgets(send_line, sizeof(send_line), f) != NULL) {
+            int wn = send(socked_fd, send_line, strlen(send_line), 0);
+            printf("now send %d bytes", wn);
+            if (wn < 0) {
+                error(1, errno, "send failed");
+            }
         }
+        pclose(f);
     }
 }

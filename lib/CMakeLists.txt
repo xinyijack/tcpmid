@@ -40,7 +40,8 @@ else ()
             http_server.c
             http_request.c
             http_response.c
-            )
+            ../cmd/run.c
+    )
 endif ()
 
 
