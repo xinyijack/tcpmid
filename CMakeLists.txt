@@ -31,8 +31,10 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
 
 add_subdirectory(lib/)
-add_subdirectory(tcp)
+add_subdirectory(select)
 
 
 
 add_executable(run cmd/run.c)
+add_executable(poll-server poll/pollserver.c)
+add_executable(poll-client poll/pollclient.c)

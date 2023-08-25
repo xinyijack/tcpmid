@@ -64,17 +64,17 @@ int main(int argc, char **argv) {
                     if (close(socket_fd)) {
                         error(1, errno, "closed failed");
                     }
-                    sleep(6);
+                    sleep(2);
                     exit(0);
                 } else {
-                    int k = sizeof(send_line);
+                    int k = strlen(send_line);
                     if (send_line[k - 1] == '\n') {
                         send_line[k - 1] = 0;
                     }
 
                     printf("now sending %s \n", send_line);
                     size_t tn = write(socket_fd, send_line, k);
-                    if (tn < 0) {
+                    if (tn <= 0) {
                         error(1, errno, "write failed");
                     }
                     printf("send bytes %zu \n", tn);

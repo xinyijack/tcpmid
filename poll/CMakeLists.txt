@@ -1,5 +1,5 @@
-add_executable(tcp-client tcpclient.c)
+add_executable(tcp-client pollclient.c)
 target_link_libraries(tcp-client yolanda)
 
-add_executable(tcp-server tcpserver.c)
+add_executable(tcp-server pollserver.c)
 target_link_libraries(tcp-server yolanda)

@@ -40,15 +40,20 @@ int main(int argc, char **argv) {
 
     struct sockaddr_in client_addr;
     size_t client_len = sizeof(client_addr);
-    int socked_fd = accept(listen_fd, (struct sockaddr *)&client_addr, &client_len);
-    if (socked_fd < 0) {
-        error(1, errno, "accept failed");
-    }
 
     char message[MAXLINE];
     count = 0;
-
+    fd_set allreads, readmask;
+    FD_ZERO(&allreads);
+    FD_SET(listen_fd, &allreads);
     while(1) {
+        readmask = allreads;
+        int socked_fd;
+        if (select(listen_fd + 1, ))
+        socked_fd = accept(listen_fd, (struct sockaddr *)&client_addr, &client_len);
+        if (socked_fd < 0) {
+            error(1, errno, "accept failed");
+        }
         int n = read(socked_fd, message, MAXLINE);
         if (n < 0) {
             error(1, errno, "read failed");
@@ -59,7 +64,7 @@ int main(int argc, char **argv) {
         printf("recv %d bytes: %s \n", n, message);
         //执行收到的命令，并在终端执行，获取执行的输出
         char send_line[MAXLINE];
-        sleep(2);
+        sleep(1);
         FILE * f;
         f = popen(message, "r");
 
