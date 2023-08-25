@@ -1,4 +1,5 @@
 #include "../lib/common.h"
+#define MAXCLINT 128
 //
 // Created by jack on 23-8-23.
 //
@@ -39,42 +40,83 @@ int main(int argc, char **argv) {
     signal(SIGPIPE, SIG_DFL);
 
     struct sockaddr_in client_addr;
-    size_t client_len = sizeof(client_addr);
+    socklen_t client_len = sizeof(client_addr);
 
     char message[MAXLINE];
     count = 0;
     fd_set allreads, readmask;
     FD_ZERO(&allreads);
     FD_SET(listen_fd, &allreads);
+    int ready_fds;
+    int max_fd = listen_fd;
+    int fds[MAXCLINT];
+    int i;
     while(1) {
         readmask = allreads;
-        int socked_fd;
-        if (select(listen_fd + 1, ))
-        socked_fd = accept(listen_fd, (struct sockaddr *)&client_addr, &client_len);
-        if (socked_fd < 0) {
-            error(1, errno, "accept failed");
-        }
-        int n = read(socked_fd, message, MAXLINE);
-        if (n < 0) {
-            error(1, errno, "read failed");
-        } else if (n == 0) {
-            error(1, errno, "client closed");
-        }
-        message[n] = 0;
-        printf("recv %d bytes: %s \n", n, message);
-        //执行收到的命令，并在终端执行，获取执行的输出
-        char send_line[MAXLINE];
-        sleep(1);
-        FILE * f;
-        f = popen(message, "r");
-
-        while (fgets(send_line, sizeof(send_line), f) != NULL) {
-            int wn = send(socked_fd, send_line, strlen(send_line), 0);
-            printf("now send %d bytes", wn);
-            if (wn < 0) {
-                error(1, errno, "send failed");
+        for (int k = 0; k < MAXCLINT; k++) {
+            if (fds[k] > 0) {
+                FD_SET(fds[k], &readmask);
             }
         }
-        pclose(f);
+
+        int socked_fd;
+        if ((ready_fds = select(max_fd + 1, &readmask, NULL, NULL, NULL)) < 0) {
+            error(1, errno, "select error");
+        }
+        if (FD_ISSET(listen_fd, &readmask)) {
+            socked_fd = accept(listen_fd, (struct sockaddr *)&client_addr, &client_len);
+            if (socked_fd < 0) {
+                error(1, errno, "accept failed");
+            }
+            for (i = 0; i < MAXCLINT; i++) {
+                if (fds[i] == 0) {
+                    fds[i] = socked_fd;
+                    break;
+                }
+            }
+            if (i == MAXCLINT) {
+                printf("can not hold too many clients");
+                write(socked_fd, "can not hold too many clients", strlen("can not hold too many clients"));
+                close(socked_fd);
+            }
+            if (socked_fd > max_fd) {
+                max_fd = socked_fd;
+            }
+            if (--ready_fds <= 0) {
+                continue;
+            }
+        }
+
+        for (int k = 0; k < MAXCLINT; k++) {
+            if (FD_ISSET(fds[k], &readmask)) {
+                int n = read(socked_fd, message, MAXLINE);
+                if (n < 0) {
+                    error(1, errno, "read failed");
+                } else if (n == 0) {
+                    error(1, errno, "client closed");
+                }
+                message[n] = 0;
+                printf("recv %d bytes: %s \n", n, message);
+                //执行收到的命令，并在终端执行，获取执行的输出
+                char send_line[MAXLINE];
+                sleep(1);
+                FILE * f;
+                f = popen(message, "r");
+
+                while (fgets(send_line, sizeof(send_line), f) != NULL) {
+                    int wn = send(socked_fd, send_line, strlen(send_line), 0);
+                    printf("now send %d bytes", wn);
+                    if (wn < 0) {
+                        error(1, errno, "send failed");
+                    }
+                }
+                pclose(f);
+                if (--ready_fds <= 0) {
+                    break;
+                }
+            }
+        }
+
+
     }
 }
