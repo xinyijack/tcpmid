@@ -27,7 +27,8 @@ int main() {
     int listen_fd, socket_fd;
     //create socket
     listen_fd = socket(AF_INET, SOCK_STREAM, 0);
-
+    int on = 1;
+    setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
     //create socket addr
     struct sockaddr_in socket_addr;
     bzero(&socket_addr, sizeof(socket_addr));
@@ -81,7 +82,7 @@ int main() {
                 }
                 make_nonblocking(conn_fd);
                 event.data.fd = conn_fd;
-                event.events = EPOLLIN;
+                event.events = EPOLLIN | EPOLLET;
                 if (epoll_ctl(efd, EPOLL_CTL_ADD, conn_fd, &event) == -1) {
                     error(1, errno, "epoll ctl failed");
                 }
