@@ -32,9 +32,5 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
 
 add_subdirectory(lib/)
 add_subdirectory(select)
-
-
-
-add_executable(run cmd/run.c)
-add_executable(poll-server poll/pollserver.c)
-add_executable(poll-client poll/pollclient.c)
+add_subdirectory(poll)
+add_subdirectory(epoll)

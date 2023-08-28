@@ -41,6 +41,8 @@ else ()
             http_request.c
             http_response.c
             ../cmd/run.c
+            ../epoll/epollserver.c
+            ../epoll/epollserver.c
     )
 endif ()
 
