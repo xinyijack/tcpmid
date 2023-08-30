@@ -43,6 +43,9 @@ else ()
             ../cmd/run.c
             ../epoll/epollserver.c
             ../epoll/epollserver.c
+            ../fork/fork01.c
+            ../fork/fork01.c
+            ../thread/thread01.c
     )
 endif ()
 

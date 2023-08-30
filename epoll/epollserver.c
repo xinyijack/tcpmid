@@ -27,6 +27,7 @@ int main() {
     int listen_fd, socket_fd;
     //create socket
     listen_fd = socket(AF_INET, SOCK_STREAM, 0);
+    fcntl(listen_fd, F_SETFL, O_NONBLOCK);
     int on = 1;
     setsockopt(listen_fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
     //create socket addr
@@ -47,7 +48,7 @@ int main() {
         error(1, errno, "listen error");
     }
 
-    signal(SIGINT, sig_int);
+//    signal(SIGINT, sig_int);
     signal(SIGPIPE, SIG_DFL);
 
 
@@ -69,7 +70,7 @@ int main() {
         ready_fd = epoll_wait(efd, events, MAXEVEVTS, -1);
         printf("epoll wake up");
         for (int i = 0; i < ready_fd; i++) {
-            if (events[i].events & EPOLLERR || events[i].events & EPOLLHUP || !(events[i].events & EPOLLIN)) {
+            if ((events[i].events & EPOLLERR) || (events[i].events & EPOLLHUP) || !(events[i].events & EPOLLIN)) {
                 fprintf(stderr, "epoll error");
                 close(events[i].data.fd);
                 continue;
@@ -79,6 +80,7 @@ int main() {
                 socklen_t client_len = sizeof(client_addr);
                 if ((conn_fd = accept(listen_fd, (struct sockaddr *) &client_addr, &client_len)) < 0) {
                     error(1, errno, "accept error");
+                    continue;
                 }
                 make_nonblocking(conn_fd);
                 event.data.fd = conn_fd;
@@ -86,17 +88,17 @@ int main() {
                 if (epoll_ctl(efd, EPOLL_CTL_ADD, conn_fd, &event) == -1) {
                     error(1, errno, "epoll ctl failed");
                 }
-                continue;
+
             } else {
                 socket_fd = events[i].data.fd;
                 while(1) {
                     int n = read(socket_fd, send_line, sizeof(send_line));
                     if (n < 0) {
-                        if (errno == EAGAIN) {
+                        if (errno != EAGAIN) {
                             error(1, errno, "read error");
                             close(socket_fd);
-                            break;
                         }
+                        break;
                     } else if (n == 0) {
                         close(socket_fd);
                         break;
