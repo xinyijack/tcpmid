@@ -5,21 +5,16 @@ if (EPOLL_EXISTS)
             read.c
             tcp_server.c
             tcp_client.c
-            event_loop.c
-            channel.c
-            acceptor.c
-            channel_map.c
-            poll_dispatcher.c
             thread_pool.c
-            event_loop_thread.c
             utils.c
-            epoll_dispatcher.c
             buffer.c
             tcp_connection.c
             http_server.c
             http_request.c
             http_response.c
-            )
+            event_loop.h
+            event_loop.c
+    )
 else ()
     set(yolanda_lib
             log.c
@@ -27,13 +22,7 @@ else ()
             read.c
             tcp_server.c
             tcp_client.c
-            event_loop.c
-            channel.c
-            acceptor.c
-            channel_map.c
-            poll_dispatcher.c
             thread_pool.c
-            event_loop_thread.c
             utils.c
             buffer.c
             tcp_connection.c
@@ -46,6 +35,15 @@ else ()
             ../fork/fork01.c
             ../fork/fork01.c
             ../thread/thread01.c
+            ../httpserver/http_server02.c
+            event_loop.h
+            event_loop.c
+            channel_map.h
+            channel_map.c
+            event_dispatcher.h
+            channel.h
+            channel.c
+            event_dispatcher.c
     )
 endif ()
 

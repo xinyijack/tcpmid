@@ -1,6 +1,9 @@
-#ifndef EVENT_DISPATCHER_H
-#define EVENT_DISPATCHER_H
+//
+// Created by cryin on 2023/9/7.
+//
 
+#ifndef YOLANDA_EVENT_DISPATCHER_H
+#define YOLANDA_EVENT_DISPATCHER_H
 #include "channel.h"
 
 /** 抽象的event_dispatcher结构体，对应的实现如select,poll,epoll等I/O复用. */
@@ -26,5 +29,4 @@ struct event_dispatcher {
     /** 清除数据 */
     void (*clear)(struct event_loop * eventLoop);
 };
-
-#endif
+#endif //YOLANDA_EVENT_DISPATCHER_H
