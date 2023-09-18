@@ -1,62 +1,40 @@
 //
-// Created by cryin on 2023/9/7.
+// Created by cryin on 2023/9/18.
 //
-#include <pthread.h>
-#include "common.h"
-#ifndef YOLANDA_EVENT_LOOP_H
-#define YOLANDA_EVENT_LOOP_H
 
-#endif //YOLANDA_EVENT_LOOP_H
-extern const struct event_dispatcher poll_dispatcher;
-extern const struct event_dispatcher epoll_dispatcher;
-
-struct channel_element {
-    int type;
-    struct channel *channel;
-    struct channel_element *next;
-};
-
+#ifndef YOLANDA_EVENTLOOP_H
+#define YOLANDA_EVENTLOOP_H
 struct event_loop {
-    //退出信号
     int quit;
 
-    //事件分发器及分发器的数据，包括事件数组events和描述符fd
-    const struct event_dispatcher *dispatcher;
-    struct event_dispatcher_data *dispatcherData;
+    struct dispatcher;
+    void *dispatch_data;
 
-    //channel map使用fd找到channel
-    struct channel_map *channelMap;
+    //ChannelElement链表
+    struct ChannelNode *head;
+    struct ChannelNode *tail;
 
-    //event_loop待处理的事件链表，记录头尾节点
-    int is_handle_pending;
-    struct channel_element *head;
-    struct channel_element *tail;
-
-    //线程相关属性
-    pthread_t ower_thread_id;
-    char *thread_name;
-    pthread_mutex_t mutex;
-    pthread_cond_t cond;
-    int socketPair[2];
+    //查询Channel的Map
+    struct Channel *channel_map;
 };
 
-struct event_loop *event_loop_init();
+//默认初始化函数
+struct event_loop *init();
+//带参数的初始化函数
+struct event_loop *init_with_thread_name(char *thread_name);
 
-struct event_loop *event_loop_init_with_name(char *thread_name);
+//ChannelNode链表的增删改函数
+int add_channel_node(struct event_loop *eventLoop, struct Channel *channel0);
 
-int event_loop_run(struct event_loop *eventLoop);
+int remove_channel_node(struct event_loop *eventLoop, struct Channel *channel0);
 
-void event_loop_wakeup(struct event_loop *eventLoop);
+int update_channel_node(struct event_loop *eventLoop, struct Channel *channel0);
 
-//Channel的增删改查
-int event_loop_add_channel_event(struct event_loop *eventLoop, int fd, struct channel *addChannel);
-int event_loop_delete_channel_event(struct event_loop *eventLoop, int fd, struct channel *addChannel);
-int event_loop_update_channel_event(struct event_loop *eventLoop, int fd, struct channel *addChannel);
+//ChannelMap的增删改函数
+int add_channel_to_map(struct event_loop *eventLoop, int fd, struct Channel *channel1);
 
-//待处理的channel队列的处理方法
-int event_loop_handle_channel_map_add(struct event_loop *eventLoop, int fd, struct channel *addChannel);
-int event_loop_handle_channel_map_delete(struct event_loop *eventLoop, int fd, struct channel *addChannel);
-int event_loop_handle_channel_map_update(struct event_loop *eventLoop, int fd, struct channel *updateChannel);
+int remove_channel_from_map(struct event_loop *eventLoop, int fd, struct Channel *channel1);
 
-//执行待处理channel的相关事件所绑定的函数方法
-int channelEventActive(struct event_loop *eventLoop, int fd, int res);
+int update_channel_in_map(struct event_loop *eventLoop, int fd, struct Channel *channel1);
+
+#endif //YOLANDA_EVENTLOOP_H
