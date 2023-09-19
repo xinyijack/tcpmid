@@ -9,13 +9,13 @@
 
 #### 安装教程
 
-1.  xxxx
-2.  xxxx
+1.  make编译源码
+2.  httpserver即为
 3.  xxxx
 
 #### 使用说明
 
-1.  xxxx
+1.  ./httpserver即可运行
 2.  xxxx
 3.  xxxx
 
