@@ -56,7 +56,7 @@ err_doit(int errnoflag, int level, const char *fmt, va_list ap) {
 //    exit(1);
 //}
 
-void yolanda_log(int severity, const char *msg) {
+void jack_log(int severity, const char *msg) {
     const char *severity_str;
     switch (severity) {
         case LOG_DEBUG_TYPE:
@@ -79,7 +79,7 @@ void yolanda_log(int severity, const char *msg) {
 
 }
 
-void yolanda_logx(int severity, const char *errstr, const char *fmt, va_list ap)
+void jack_logx(int severity, const char *errstr, const char *fmt, va_list ap)
 {
     char buf[1024];
     size_t len;
@@ -96,23 +96,23 @@ void yolanda_logx(int severity, const char *errstr, const char *fmt, va_list ap)
         }
     }
 
-    yolanda_log(severity, buf);
+    jack_log(severity, buf);
 }
 
-void yolanda_msgx(const char *fmt, ...)
+void jack_msgx(const char *fmt, ...)
 {
     va_list ap;
 
     va_start(ap, fmt);
-    yolanda_logx(LOG_MSG_TYPE, NULL, fmt, ap);
+    jack_logx(LOG_MSG_TYPE, NULL, fmt, ap);
     va_end(ap);
 }
 
-void yolanda_debugx(const char *fmt, ...)
+void jack_debugx(const char *fmt, ...)
 {
     va_list ap;
 
     va_start(ap, fmt);
-    yolanda_logx(LOG_DEBUG_TYPE, NULL, fmt, ap);
+    jack_logx(LOG_DEBUG_TYPE, NULL, fmt, ap);
     va_end(ap);
 }

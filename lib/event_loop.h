@@ -1,40 +1,61 @@
-//
-// Created by cryin on 2023/9/18.
-//
+#ifndef EVENT_LOOP_H
+#define EVENT_LOOP_H
 
-#ifndef YOLANDA_EVENTLOOP_H
-#define YOLANDA_EVENTLOOP_H
-struct event_loop {
-    int quit;
+#include <pthread.h>
+#include "channel.h"
+#include "event_dispatcher.h"
+#include "common.h"
 
-    struct dispatcher;
-    void *dispatch_data;
+extern const struct event_dispatcher poll_dispatcher;
+extern const struct event_dispatcher epoll_dispatcher;
 
-    //ChannelElement链表
-    struct ChannelNode *head;
-    struct ChannelNode *tail;
-
-    //查询Channel的Map
-    struct Channel *channel_map;
+struct channel_element {
+    int type; //1: add  2: delete
+    struct channel *channel;
+    struct channel_element *next;
 };
 
-//默认初始化函数
-struct event_loop *init();
-//带参数的初始化函数
-struct event_loop *init_with_thread_name(char *thread_name);
+struct event_loop {
+    int quit;
+    const struct event_dispatcher *eventDispatcher;
 
-//ChannelNode链表的增删改函数
-int add_channel_node(struct event_loop *eventLoop, struct Channel *channel0);
+    /** 对应的event_dispatcher的数据. */
+    void *event_dispatcher_data;
+    struct channel_map *channelMap;
 
-int remove_channel_node(struct event_loop *eventLoop, struct Channel *channel0);
+    int is_handle_pending;
+    struct channel_element *pending_head;
+    struct channel_element *pending_tail;
+    //无限时间循环中的锁以及线程id，以及主线程和子线程通信用的socketPair管道，
+    pthread_t owner_thread_id;
+    pthread_mutex_t mutex;
+    pthread_cond_t cond;
+    int socketPair[2];
+    char *thread_name;
+};
 
-int update_channel_node(struct event_loop *eventLoop, struct Channel *channel0);
+struct event_loop *event_loop_init();
 
-//ChannelMap的增删改函数
-int add_channel_to_map(struct event_loop *eventLoop, int fd, struct Channel *channel1);
+struct event_loop *event_loop_init_with_name(char * thread_name);
 
-int remove_channel_from_map(struct event_loop *eventLoop, int fd, struct Channel *channel1);
+int event_loop_run(struct event_loop *eventLoop);
 
-int update_channel_in_map(struct event_loop *eventLoop, int fd, struct Channel *channel1);
+void event_loop_wakeup(struct event_loop *eventLoop);
 
-#endif //YOLANDA_EVENTLOOP_H
+int event_loop_add_channel_event(struct event_loop *eventLoop, int fd, struct channel *channel1);
+
+int event_loop_remove_channel_event(struct event_loop *eventLoop, int fd, struct channel *channel1);
+
+int event_loop_update_channel_event(struct event_loop *eventLoop, int fd, struct channel *channel1);
+
+int event_loop_handle_pending_add(struct event_loop *eventLoop, int fd, struct channel *channel);
+
+int event_loop_handle_pending_remove(struct event_loop *eventLoop, int fd, struct channel *channel);
+
+int event_loop_handle_pending_update(struct event_loop *eventLoop, int fd, struct channel *channel);
+
+// dispather派发完事件之后，调用该方法通知event_loop执行对应事件的相关callback方法
+// res: EVENT_READ | EVENT_READ等
+int channel_event_activate(struct event_loop *eventLoop, int fd, int res);
+
+#endif

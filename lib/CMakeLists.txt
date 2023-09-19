@@ -1,47 +1,53 @@
 if (EPOLL_EXISTS)
-    set(yolanda_lib
+    set(xinyijack_lib
             log.c
             sock_ntop.c
             read.c
             tcp_server.c
             tcp_client.c
+            event_loop.c
+            channel.c
+            acceptor.c
+            channel_map.c
+            poll_dispatcher.c
+            thread_pool.c
+            event_loop_thread.c
             utils.c
+            epoll_dispatcher.c
             buffer.c
             tcp_connection.c
-            channel.c
-            acceptot.h
-            acceptor.c
-    )
+            http_server.c
+            http_request.c
+            http_response.c
+            )
 else ()
-    set(yolanda_lib
+    set(xinyijack_lib
             log.c
             sock_ntop.c
             read.c
             tcp_server.c
             tcp_client.c
+            event_loop.c
+            channel.c
+            acceptor.c
+            channel_map.c
+            poll_dispatcher.c
+            thread_pool.c
+            event_loop_thread.c
             utils.c
             buffer.c
             tcp_connection.c
-            ../cmd/run.c
-            ../epoll/epollserver.c
-            ../epoll/epollserver.c
-            ../fork/fork01.c
-            ../fork/fork01.c
-            ../thread/thread01.c
-            ../httpserver/http_server02.c
-            event_loop.h
-            channel.h
-            channel.c
-            acceptot.h
-            acceptor.c
-    )
+            http_server.c
+            http_request.c
+            http_response.c
+            )
 endif ()
 
 
-add_library(yolanda ${yolanda_lib})
-target_link_libraries(yolanda pthread)
+add_library(xinyijack ${xinyijack_lib})
+target_link_libraries(xinyijack pthread)
 
-install(TARGETS yolanda DESTINATION lib)
+install(TARGETS xinyijack DESTINATION lib)
 
 #file(GLOB HEADERS "*.h")
 #install(FILES ${HEADERS} DESTINATION include/)

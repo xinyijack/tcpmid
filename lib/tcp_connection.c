@@ -50,7 +50,7 @@ int handle_write(void *data) {
             tcpConnection->writeCompletedCallBack(tcpConnection);
         }
     } else {
-        yolanda_msgx("handle_write for tcp connection %s", tcpConnection->name);
+        jack_msgx("handle_write for tcp connection %s", tcpConnection->name);
     }
 
 }
@@ -131,6 +131,6 @@ int tcp_connection_send_buffer(struct tcp_connection *tcpConnection, struct buff
 
 void tcp_connection_shutdown(struct tcp_connection *tcpConnection) {
     if (shutdown(tcpConnection->channel->fd, SHUT_WR) < 0) {
-        yolanda_msgx("tcp_connection_shutdown failed, socket == %d", tcpConnection->channel->fd);
+        jack_msgx("tcp_connection_shutdown failed, socket == %d", tcpConnection->channel->fd);
     }
 }

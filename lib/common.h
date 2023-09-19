@@ -8,7 +8,7 @@
 #include "config.h"
 
 #include "log.h"
-//#include "tcp_server.h"
+#include "tcp_server.h"
 #include "inetaddress.h"
 #include "channel_map.h"
 
@@ -73,7 +73,7 @@ void make_nonblocking(int fd);
 
 int tcp_client(char *address, int port);
 
-#define    SERV_PORT      43212
+#define    SERV_PORT      43211
 #define    MAXLINE        4096
 #define    UNIXSTR_PATH   "/var/lib/unixstream.sock"
 #define    LISTENQ        1024

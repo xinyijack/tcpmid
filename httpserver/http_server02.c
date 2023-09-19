@@ -2,15 +2,16 @@
 // Created by cryin on 2023/9/7.
 //
 
-#ifndef YOLANDA_HTTP_SERVER_H
-#define YOLANDA_HTTP_SERVER_H
+#ifndef XINYIJACK_HTTP_SERVER_H
+#define XINYIJACK_HTTP_SERVER_H
 
-#endif //YOLANDA_HTTP_SERVER_H
+#endif //XINYIJACK_HTTP_SERVER_H
 
 #include <lib/acceptor.h>
 #include <lib/http_server.h>
 #include "lib/common.h"
 #include "lib/event_loop.h"
+#include "lib/utils.c"
 
 //数据读到buffer之后的callback
 int onRequest(struct http_request *httpRequest, struct http_response *httpResponse) {
